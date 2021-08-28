@@ -1,5 +1,7 @@
 package com.yfm.rpcdemo.consumer;
 
+import com.yfm.rpcdemo.producer.User;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -15,20 +17,21 @@ public class ClientSocket {
     public static void main(String[] args) {
         int port = 8080;
         try (
+                //监听端口
                 ServerSocket serverSocket = new ServerSocket(port);
                 Socket client = serverSocket.accept();
                 InputStream inputStream = client.getInputStream();
-                Reader reader = new InputStreamReader(inputStream)
+                ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
         ){
-            //监听端口
-            char[] temp = new char[1024];
-            int len;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((len = reader.read(temp)) != -1 ) {
-                stringBuilder.append(new String(temp,0,len));
+            Object object = objectInputStream.readObject();
+            if(object != null) {
+                User user = (User) object;
+                System.out.println("客户端收到的消息 : " + user);
             }
-            System.out.println("客户端收到的消息 : " + stringBuilder.toString());
+
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

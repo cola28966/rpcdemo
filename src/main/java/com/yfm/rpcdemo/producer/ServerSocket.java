@@ -3,6 +3,7 @@ package com.yfm.rpcdemo.producer;
 import com.yfm.rpcdemo.producer.Imp.UserService;
 
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -22,9 +23,10 @@ public class ServerSocket {
         try (
                 Socket server = new Socket(host, port);
                 OutputStream outputStream = server.getOutputStream();
-                OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream)
+                ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+
         ){
-            outputStreamWriter.write(user.toString());
+            objectOutputStream.writeObject(user);
             System.out.println("服务端消息发送完成");
         } catch (IOException e) {
             e.printStackTrace();
